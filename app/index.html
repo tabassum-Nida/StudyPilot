@@ -83,12 +83,56 @@
             margin-bottom: 18px;
         }
 
+        .add-task {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        #taskInput {
+            flex: 1;
+            min-width: 0;
+            padding: 14px 16px;
+            border: 1px solid #ded9ff;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+            color: #282541;
+        }
+
+        #taskInput:focus {
+            border-color: #7567e8;
+            box-shadow: 0 0 0 3px #7567e822;
+        }
+
+        #addTaskBtn {
+            border: none;
+            border-radius: 12px;
+            padding: 14px 18px;
+            background: #6c5ce7;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #addTaskBtn:hover {
+            background: #5746d5;
+        }
+
         .task-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
             margin-bottom: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .task-card h3 {
+            overflow-wrap: anywhere;
         }
 
         .task-card p {
@@ -103,7 +147,33 @@
             border-radius: 20px;
             font-size: 12px;
             white-space: nowrap;
+        } 
+         
+        .task-card.completed h3 {
+            text-decoration: line-through;
+            color: #9995ad;
         }
+
+        .task-card.completed {
+            opacity: 0.8;
+        }
+
+        .task-checkbox {
+           width: 19px;
+           height: 19px;
+           accent-color: #6c5ce7;
+           cursor: pointer;
+           flex-shrink: 0;
+        }
+
+        .task-content {
+           display: flex;
+           align-items: flex-start;
+           gap: 12px;
+           flex: 1;
+           min-width: 0;
+         }
+
 
         footer {
             text-align: center;
@@ -125,6 +195,14 @@
 
             .stats {
                 grid-template-columns: 1fr;
+            }
+
+            .add-task {
+                flex-direction: column;
+            }
+
+            #addTaskBtn {
+                width: 100%;
             }
 
             .task-card {
@@ -156,12 +234,12 @@
     <section class="stats">
         <div class="stat-card">
             <p>Total Tasks</p>
-            <h3>0</h3>
+            <h3 id="totalTasks">0</h3>
         </div>
 
         <div class="stat-card">
             <p>Completed</p>
-            <h3>0</h3>
+            <h3 id="completedTasks">0</h3>
         </div>
 
         <div class="stat-card">
@@ -173,28 +251,44 @@
     <section>
         <h2 class="section-title">Today's Study Plan</h2>
 
-        <div class="task-card">
-            <div>
-                <h3>Revise Data Structures</h3>
-                <p>Estimated time: 60 minutes</p>
-            </div>
-            <span class="priority">High Priority</span>
-        </div>
+        <form class="add-task" id="taskForm">
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="What do you want to study today?"
+                maxlength="120"
+                aria-label="New study task"
+                required
+            >
+            <button type="submit" id="addTaskBtn">
+                + Add Task
+            </button>
+        </form>
 
-        <div class="task-card">
-            <div>
-                <h3>Practice SQL Questions</h3>
-                <p>Estimated time: 45 minutes</p>
+        <div id="taskList">
+            <div class="task-card">
+                <div>
+                    <h3>Revise Data Structures</h3>
+                    <p>Estimated time: 60 minutes</p>
+                </div>
+                <span class="priority">High Priority</span>
             </div>
-            <span class="priority">Medium Priority</span>
-        </div>
 
-        <div class="task-card">
-            <div>
-                <h3>Review Class Notes</h3>
-                <p>Estimated time: 30 minutes</p>
+            <div class="task-card">
+                <div>
+                    <h3>Practice SQL Questions</h3>
+                    <p>Estimated time: 45 minutes</p>
+                </div>
+                <span class="priority">Medium Priority</span>
             </div>
-            <span class="priority">Low Priority</span>
+
+            <div class="task-card">
+                <div>
+                    <h3>Review Class Notes</h3>
+                    <p>Estimated time: 30 minutes</p>
+                </div>
+                <span class="priority">Low Priority</span>
+            </div>
         </div>
     </section>
 
@@ -211,6 +305,130 @@
                 month: "short",
                 year: "numeric"
             });
+
+        const taskForm = document.getElementById("taskForm");
+        const taskInput = document.getElementById("taskInput");
+        const taskList = document.getElementById("taskList");
+
+        const totalTasksCount =
+            document.getElementById("totalTasks");
+
+        const completedTasksCount =
+            document.getElementById("completedTasks");
+
+        const sampleTasks = Array.from(
+            taskList.querySelectorAll(".task-card")
+        ).map(card => ({
+            title: card.querySelector("h3").textContent,
+            details: card.querySelector("p").textContent,
+            priority: card.querySelector(".priority").textContent,
+            completed: false
+        }));
+        let tasks;
+
+        try {
+            const savedTasks =
+                localStorage.getItem("studyPilotTasks");
+
+            tasks = savedTasks
+                ? JSON.parse(savedTasks)
+                : sampleTasks;
+
+            if (!Array.isArray(tasks)) {
+                tasks = sampleTasks;
+            }
+        } catch (error) {
+            tasks = sampleTasks;
+        }
+        function saveTasks() {
+            try {
+                localStorage.setItem(
+                    "studyPilotTasks",
+                    JSON.stringify(tasks)
+                );
+            } catch (error) {
+                console.warn("Tasks could not be saved.", error);
+            }
+        }
+
+        // counter
+        function renderTasks() {
+           taskList.replaceChildren();
+
+           tasks.forEach((task, index) => {
+            const card = document.createElement("div");
+               card.className = "task-card";
+
+            if (task.completed) {
+               card.classList.add("completed");
+            }
+
+            const content = document.createElement("div");
+            content.className = "task-content";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "task-checkbox";
+            checkbox.checked = task.completed;
+            checkbox.setAttribute(
+               "aria-label",
+                "Mark " + task.title + " as completed"
+            );
+
+            checkbox.addEventListener("change", function() {
+                tasks[index].completed = checkbox.checked;
+                saveTasks();
+                renderTasks();
+            });
+
+            const taskDetails = document.createElement("div");
+
+            const title = document.createElement("h3");
+            title.textContent = task.title;
+
+            const details = document.createElement("p");
+            details.textContent =
+              task.details || "Added to your study plan";
+
+            taskDetails.append(title, details);
+            content.append(checkbox, taskDetails);
+
+            const priority = document.createElement("span");
+            priority.className = "priority";
+            priority.textContent = task.priority || "New Task";
+
+            card.append(content, priority);
+            taskList.appendChild(card);
+        });
+
+        totalTasksCount.textContent = tasks.length;
+
+        completedTasksCount.textContent =
+          tasks.filter(task => task.completed).length;
+    }
+        taskForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const taskName = taskInput.value.trim();
+
+            if (taskName === "") {
+                return;
+            }
+
+            tasks.push({
+                title: taskName,
+                details: "Added to your study plan",
+                priority: "New Task",
+                completed: false
+            });
+
+            saveTasks();
+            renderTasks();
+
+            taskInput.value = "";
+            taskInput.focus();
+        });
+        renderTasks();
     </script>
 </body>
 </html>
