@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyPilot | Your Study Space</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f5ff;
+            color: #282541;
+            padding: 30px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .subtitle {
+            color: #77748d;
+            margin-top: 7px;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #7567e8, #a69bf7);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card, .task-card {
+            background: white;
+            padding: 22px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px #2825410a;
+        }
+
+        .stat-card p {
+            color: #77748d;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h3 {
+            font-size: 28px;
+            color: #6c5ce7;
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+        }
+
+        .task-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 14px;
+        }
+
+        .task-card p {
+            color: #77748d;
+            margin-top: 7px;
+        }
+
+        .priority {
+            background: #fff0d9;
+            color: #a76500;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #77748d;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 18px;
+            }
+
+            header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .task-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>
+            <div class="logo">StudyPilot ✦</div>
+            <p class="subtitle">Your personal study space</p>
+        </div>
+
+        <p id="today"></p>
+    </header>
+
+    <section class="welcome">
+        <h2>Small steps, big progress 🌷</h2>
+        <p>
+            Plan your studies, focus on what matters,
+            and make every study session count.
+        </p>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <p>Total Tasks</p>
+            <h3>0</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Completed</p>
+            <h3>0</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Focus Time</p>
+            <h3>0 hrs</h3>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Today's Study Plan</h2>
+
+        <div class="task-card">
+            <div>
+                <h3>Revise Data Structures</h3>
+                <p>Estimated time: 60 minutes</p>
+            </div>
+            <span class="priority">High Priority</span>
+        </div>
+
+        <div class="task-card">
+            <div>
+                <h3>Practice SQL Questions</h3>
+                <p>Estimated time: 45 minutes</p>
+            </div>
+            <span class="priority">Medium Priority</span>
+        </div>
+
+        <div class="task-card">
+            <div>
+                <h3>Review Class Notes</h3>
+                <p>Estimated time: 30 minutes</p>
+            </div>
+            <span class="priority">Low Priority</span>
+        </div>
+    </section>
+
+    <footer>
+        Built with purpose, one day at a time. ✨
+    </footer>
+
+    <script>
+        const today = new Date();
+
+        document.getElementById("today").textContent =
+            today.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+            });
+    </script>
+</body>
+</html>
