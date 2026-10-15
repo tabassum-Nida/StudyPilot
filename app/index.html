@@ -204,6 +204,22 @@
             #addTaskBtn {
                 width: 100%;
             }
+            
+            .delete-task {
+               border: none;
+               background: #fff0f0;
+               color: #d64545;
+               padding: 9px 12px;
+               border-radius: 10px;
+               cursor: pointer;
+               font-size: 16px;
+               flex-shrink: 0;
+            }
+
+            .delete-task:hover {
+               background: #ffe0e0;
+            }
+
 
             .task-card {
                 align-items: flex-start;
@@ -397,7 +413,21 @@
             priority.className = "priority";
             priority.textContent = task.priority || "New Task";
 
-            card.append(content, priority);
+                 
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "delete-task";
+            deleteButton.type = "button";
+            deleteButton.setAttribute("aria-label", "Delete " + task.title);
+
+            deleteButton.addEventListener("click", function() {
+                tasks.splice(index, 1);
+                saveTasks();
+                renderTasks();
+            });
+
+            card.append(content, priority, deleteButton);
+
             taskList.appendChild(card);
         });
 
