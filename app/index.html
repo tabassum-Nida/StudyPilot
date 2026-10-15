@@ -105,6 +105,23 @@
             border-color: #7567e8;
             box-shadow: 0 0 0 3px #7567e822;
         }
+        
+        #taskDeadline,
+        #taskPriority {
+           min-width: 0;
+           padding: 14px 12px;
+           border: 1px solid #ded9ff;
+           border-radius: 12px;
+           background: white;
+           color: #282541;
+           font-size: 14px;
+        }
+
+        #taskDeadline:focus,
+        #taskPriority:focus {
+           outline: 2px solid #a69bf7;
+        }
+
 
         #addTaskBtn {
             border: none;
@@ -267,17 +284,32 @@
     <section>
         <h2 class="section-title">Today's Study Plan</h2>
 
+        
         <form class="add-task" id="taskForm">
             <input
-                type="text"
+               type="text"
                 id="taskInput"
-                placeholder="What do you want to study today?"
+                placeholder="What do you want to study?"
                 maxlength="120"
                 aria-label="New study task"
                 required
+        >
+
+            <input
+              type="date"
+               id="taskDeadline"
+                aria-label="Task deadline"
+                required
             >
+
+            <select id="taskPriority" aria-label="Task priority">
+              <option value="High Priority">High Priority</option>
+               <option value="Medium Priority" selected>Medium Priority</option>
+               <option value="Low Priority">Low Priority</option>
+            </select>
+
             <button type="submit" id="addTaskBtn">
-                + Add Task
+              + Add Task
             </button>
         </form>
 
@@ -325,13 +357,10 @@
         const taskForm = document.getElementById("taskForm");
         const taskInput = document.getElementById("taskInput");
         const taskList = document.getElementById("taskList");
-
-        const totalTasksCount =
-            document.getElementById("totalTasks");
-
-        const completedTasksCount =
-            document.getElementById("completedTasks");
-
+        const taskDeadline = document.getElementById("taskDeadline");
+        const taskPriority = document.getElementById("taskPriority");
+        const totalTasksCount = document.getElementById("totalTasks");
+        const completedTasksCount = document.getElementById("completedTasks");
         const sampleTasks = Array.from(
             taskList.querySelectorAll(".task-card")
         ).map(card => ({
@@ -405,6 +434,9 @@
             const details = document.createElement("p");
             details.textContent =
               task.details || "Added to your study plan";
+            if (task.deadline) {
+                details.textContent += " • Deadline: " + task.deadline;
+            }
 
             taskDetails.append(title, details);
             content.append(checkbox, taskDetails);
@@ -448,15 +480,18 @@
             tasks.push({
                 title: taskName,
                 details: "Added to your study plan",
-                priority: "New Task",
+                deadline: taskDeadline.value,
+                priority: taskPriority.value,
                 completed: false
             });
-
             saveTasks();
             renderTasks();
 
             taskInput.value = "";
+            taskDeadline.value="";
+            taskPriority.value="Medium Priority";
             taskInput.focus();
+
         });
         renderTasks();
     </script>
